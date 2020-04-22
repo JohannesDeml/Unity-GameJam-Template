@@ -1,13 +1,14 @@
 {
   "dependencies": {
-    "com.oss.leantween": "https://github.com/JohannesDeml/LeanTween.git#2.50.3",
-    "com.supyrb.configurableshaders": "https://github.com/supyrb/ConfigurableShaders.git#0.6.3",
-    "com.supyrb.signals": "https://github.com/supyrb/signals.git#0.3.1",
-    "com.unity.collab-proxy": "1.2.16",
+    "ca.andydbc.unity-texture-packer": "0.0.1",
+    "com.oss.leantween": "2.50.3",
+    "com.supyrb.configurableshaders": "0.7.1",
+    "com.supyrb.signals": "0.5.0",
     "com.unity.ide.rider": "1.1.4",
     "com.unity.ide.vscode": "1.1.4",
-    "com.unity.test-framework": "1.1.9",
-    "com.unity.textmeshpro": "2.0.1",
+    "com.unity.quicksearch": "1.6.0-preview.6",
+    "com.unity.test-framework": "1.1.14",
+    "com.unity.textmeshpro": "2.1.0-preview.10",
     "com.unity.timeline": "1.2.10",
     "com.unity.ugui": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
@@ -42,18 +43,17 @@
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
   },
-  "lock": {
-    "com.oss.leantween": {
-      "revision": "2.50.3",
-      "hash": "36e5f888f7f2c38597a1dd555e7f6898fa700f15"
-    },
-    "com.supyrb.configurableshaders": {
-      "revision": "0.6.3",
-      "hash": "0d1204cd48eecb0d0e7ce16a669fcc14703255b8"
-    },
-    "com.supyrb.signals": {
-      "revision": "0.3.1",
-      "hash": "2f07b4b8f49f5054fcde4510ab16a8e2718bb064"
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "ca.andydbc.unity-texture-packer",
+        "com.openupm",
+        "com.oss.leantween",
+        "com.supyrb.configurableshaders",
+        "com.supyrb.signals"
+      ]
     }
-  }
+  ]
 }
