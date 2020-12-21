@@ -1,4 +1,4 @@
-# Unity .gitignore - Deml v1.0.0
+# Unity .gitignore - Deml v2020.2.0
 # Source https://github.com/JohannesDeml/UnityTemplate/
 
 # Unity generated
@@ -7,6 +7,10 @@
 /Library/**
 /obj/**
 /UserSettings/**
+/Packages/*/**
+/Packages/*.meta
+/Logs/AssetImport*.log
+/Logs/ApiUpdaterCheck.txt
 
 # Visual Studio / Rider / MonoDevelop generated
 /ExportedObj/**
