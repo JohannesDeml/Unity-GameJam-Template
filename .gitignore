@@ -1,16 +1,13 @@
-# Unity .gitignore - Deml v2020.2.0
+# Unity .gitignore - Deml v2021.2.0
 # Source https://github.com/JohannesDeml/UnityTemplate/
 
-# Unity generated
+## Unity generated
 /.gradle/**
 /Temp/**
 /Library/**
 /obj/**
+/Logs/**
 /UserSettings/**
-/Packages/*/**
-/Packages/*.meta
-/Logs/AssetImport*.log
-/Logs/ApiUpdaterCheck.txt
 
 # Visual Studio / Rider / MonoDevelop generated
 /ExportedObj/**
@@ -19,6 +16,7 @@
 *.svd
 *.userprefs
 *.csproj
+*.csproj.meta
 *.pidb
 *.suo
 *.sln
@@ -34,6 +32,8 @@
 *.orig.*
 *sln*
 .idea/**
+/Assets/Plugins/Editor/Jetbrains/*
+/Assets/Plugins/Editor/Jetbrains.meta
 
 *.blend1
 
@@ -55,3 +55,5 @@ report.xml
 /Assets/_Project/Preferences/Editor/Credentials.meta
 /Assets/Temp/**
 /Assets/Temp.meta
+/.sonarqube
+ProjectSettings/RiderScriptEditorPersistedState.asset
