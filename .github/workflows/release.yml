@@ -1,0 +1,92 @@
+# Build the project by pushing tags
+name: Build project & release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  variables:
+    name: Define variables 🔗
+    runs-on: ubuntu-latest
+    outputs:
+      UNITY_VERSION: ${{ steps.set_unity_version.outputs.VERSION }}
+      TAG: ${{ steps.set_tag.outputs.VERSION }}
+      BUILD_NAME: ${{ steps.set_build_name.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Set unity version
+        id: set_unity_version
+        run: |
+          UNITY_VERSION=$(sed -n 's/^\m_EditorVersion: //p'< ./ProjectSettings/ProjectVersion.txt)
+          echo "VERSION=$UNITY_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set tag
+        id: set_tag
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+
+      - name: Set target name
+        id: set_build_name
+        run: echo "VERSION=${{ steps.set_tag.outputs.VERSION }}" >> $GITHUB_OUTPUT
+
+      - name: Log variables
+        run: |
+          echo "UNITY_VERSION -> ${{ steps.set_unity_version.outputs.VERSION }}"
+          echo "TAG -> ${{ steps.set_tag.outputs.VERSION }}"
+          echo "BUILD_NAME -> ${{ steps.set_build_name.outputs.VERSION }}"
+
+  buildProject:
+    name: Create Unity Build for  ${{ matrix.targetPlatform }} 🏗
+    needs: [ variables ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64
+          - StandaloneOSX
+          - StandaloneLinux64
+          - WebGL
+          # Remove comments below to build for mobile platforms
+          # - iOS
+          # - Android
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
+
+      - name: Build project
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          buildMethod: UnityBuilderAction.BuildScript.BuildWithCommandlineArgs
+          customParameters: -tag ${{ needs.variables.outputs.TAG }} -buildVersion ${{ needs.variables.outputs.TAG }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          buildName: ${{ matrix.targetPlatform }}-${{ needs.variables.outputs.TAG }}
+
+  createRelease:
+    name: Create Github release 🐙
+    needs: [ variables ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            ## ${{ needs.variables.outputs.TAG }}
+          draft: true
