@@ -75,9 +75,10 @@ jobs:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           buildMethod: UnityBuilderAction.BuildScript.BuildWithCommandlineArgs
-          customParameters: -tag ${{ needs.variables.outputs.TAG }} -buildVersion ${{ needs.variables.outputs.TAG }}
+          customParameters: -tag ${{ needs.variables.outputs.TAG }}
           targetPlatform: ${{ matrix.targetPlatform }}
           buildName: ${{ matrix.targetPlatform }}-${{ needs.variables.outputs.TAG }}
+          versioning: Tag
 
   createRelease:
     name: Create Github release 🐙
