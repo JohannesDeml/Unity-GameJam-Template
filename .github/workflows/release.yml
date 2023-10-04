@@ -89,7 +89,7 @@ jobs:
 
   createRelease:
     name: Create Github release 🐙
-    needs: [ variables ]
+    needs: [ variables, buildProject ]
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
