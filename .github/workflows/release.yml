@@ -51,9 +51,9 @@ jobs:
       matrix:
         targetPlatform:
           - StandaloneWindows64
-          - StandaloneOSX
-          - StandaloneLinux64
-          - WebGL
+          #- StandaloneOSX
+          #- StandaloneLinux64
+          #- WebGL
           # Remove comments below to build for mobile platforms
           # - iOS
           # - Android
