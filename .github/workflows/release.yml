@@ -24,15 +24,15 @@ jobs:
         id: set_unity_version
         run: |
           UNITY_VERSION=$(sed -n 's/^\m_EditorVersion: //p'< ./ProjectSettings/ProjectVersion.txt)
-          echo "VERSION=$UNITY_VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$UNITY_VERSION" >> $GITHUB_ENV
 
       - name: Set tag
         id: set_tag
-        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
 
       - name: Set target name
         id: set_build_name
-        run: echo "VERSION=${{ steps.set_tag.outputs.VERSION }}" >> $GITHUB_OUTPUT
+        run: echo "VERSION=${{ steps.set_tag.outputs.VERSION }}" >> $GITHUB_ENV
 
       - name: Log variables
         run: |
@@ -44,6 +44,8 @@ jobs:
     name: Create Unity Build for  ${{ matrix.targetPlatform }} 🏗
     needs: [ variables ]
     runs-on: ubuntu-latest
+    outputs:
+      artifacts: ${{ matrix.targetPlatform }}
     strategy:
       fail-fast: false
       matrix:
@@ -84,7 +86,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Build ${{ matrix.targetPlatform }}
+          name: ${{ matrix.targetPlatform }}
           path: builds/${{ matrix.targetPlatform }}
 
   createRelease:
@@ -94,8 +96,6 @@ jobs:
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
-        with:
-          name: builds
 
       - name: Zip release
         run: zip -r AllBuilds.zip builds
@@ -103,7 +103,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: AllBuilds.zip
+          files: .
           body: |
             ## ${{ needs.variables.outputs.TAG }}
           draft: true
