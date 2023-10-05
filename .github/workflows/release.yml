@@ -97,9 +97,6 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
 
-      - name: Zip release
-        run: zip -r AllBuilds.zip builds
-
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
