@@ -96,11 +96,20 @@ jobs:
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
+        with:
+          path: builds/
+
+      - name: List all artifacts
+        run: ls -R
+        working-directory: builds/
+
+      - name: Zip release
+        run: zip -r AllBuilds.zip builds
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: .
+          files: AllBuilds.zip
           body: |
             ## ${{ needs.variables.outputs.TAG }}
           draft: true
