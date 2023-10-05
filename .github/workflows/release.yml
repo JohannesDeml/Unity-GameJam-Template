@@ -24,15 +24,15 @@ jobs:
         id: set_unity_version
         run: |
           UNITY_VERSION=$(sed -n 's/^\m_EditorVersion: //p'< ./ProjectSettings/ProjectVersion.txt)
-          echo "VERSION=$UNITY_VERSION" >> $GITHUB_ENV
+          echo "VERSION=$UNITY_VERSION" >> $GITHUB_OUTPUT
 
       - name: Set tag
         id: set_tag
-        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
       - name: Set target name
         id: set_build_name
-        run: echo "VERSION=${{ steps.set_tag.outputs.VERSION }}" >> $GITHUB_ENV
+        run: echo "VERSION=${{ steps.set_tag.outputs.VERSION }}" >> $GITHUB_OUTPUT
 
       - name: Log variables
         run: |
@@ -80,14 +80,14 @@ jobs:
           customParameters: -tag ${{ needs.variables.outputs.TAG }}
           targetPlatform: ${{ matrix.targetPlatform }}
           buildName: ${{ matrix.targetPlatform }}-${{ needs.variables.outputs.TAG }}
-          buildsPath: builds/${{ matrix.targetPlatform }}
+          buildsPath: builds
           versioning: Tag
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.targetPlatform }}
-          path: builds/${{ matrix.targetPlatform }}
+          path: builds
 
   createRelease:
     name: Create Github release 🐙
