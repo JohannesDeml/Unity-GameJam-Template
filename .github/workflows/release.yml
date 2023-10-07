@@ -13,7 +13,7 @@ jobs:
     outputs:
       UNITY_VERSION: ${{ steps.set_unity_version.outputs.VERSION }}
       TAG: ${{ steps.set_tag.outputs.VERSION }}
-      BUILD_NAME: ${{ steps.set_build_name.outputs.VERSION }}
+      BUILD_NAME: ${{ steps.set_product_name.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -30,15 +30,17 @@ jobs:
         id: set_tag
         run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
 
-      - name: Set target name
-        id: set_build_name
-        run: echo "VERSION=${{ steps.set_tag.outputs.VERSION }}" >> $GITHUB_OUTPUT
+      - name: Set product name
+        id: set_product_name
+        run: |
+          PRODUCT_NAME=$(sed -n '/productName:/s/.*: \(.*\)/\1/p' < ./ProjectSettings/ProjectSettings.asset)
+          echo "VERSION=$PRODUCT_NAME" >> $GITHUB_OUTPUT
 
       - name: Log variables
         run: |
           echo "UNITY_VERSION -> ${{ steps.set_unity_version.outputs.VERSION }}"
           echo "TAG -> ${{ steps.set_tag.outputs.VERSION }}"
-          echo "BUILD_NAME -> ${{ steps.set_build_name.outputs.VERSION }}"
+          echo "PRODUCT_NAME -> ${{ steps.set_product_name.outputs.VERSION }}"
 
   buildProject:
     name: Create Unity Build for  ${{ matrix.targetPlatform }} 🏗
@@ -55,8 +57,8 @@ jobs:
           - StandaloneLinux64
           - WebGL
           # Remove comments below to build for mobile platforms
-          # - iOS
-          # - Android
+          - iOS
+          - Android
     steps:
       - uses: actions/checkout@v3
         with:
@@ -71,6 +73,9 @@ jobs:
             Library-${{ matrix.targetPlatform }}-
             Library-
 
+      - if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.2.0
+
       - name: Build project
         uses: game-ci/unity-builder@v3
         env:
@@ -79,7 +84,7 @@ jobs:
           buildMethod: UnityBuilderAction.BuildScript.BuildWithCommandlineArgs
           customParameters: -tag ${{ needs.variables.outputs.TAG }}
           targetPlatform: ${{ matrix.targetPlatform }}
-          buildName: ${{ matrix.targetPlatform }}-${{ needs.variables.outputs.TAG }}
+          buildName: ${{ needs.variables.outputs.PRODUCT_NAME }}-${{ needs.variables.outputs.TAG }}
           buildsPath: builds
           versioning: Tag
 
@@ -104,12 +109,12 @@ jobs:
         working-directory: builds/
 
       - name: Zip release
-        run: zip -r AllBuilds.zip builds
+        run: zip -r AllBuilds-${{ needs.variables.outputs.TAG }}.zip builds
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: AllBuilds.zip
+          files: AllBuilds-${{ needs.variables.outputs.TAG }}.zip
           body: |
             ## ${{ needs.variables.outputs.TAG }}
           draft: true
