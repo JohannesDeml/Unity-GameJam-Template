@@ -13,7 +13,7 @@ jobs:
     outputs:
       UNITY_VERSION: ${{ steps.set_unity_version.outputs.VERSION }}
       TAG: ${{ steps.set_tag.outputs.VERSION }}
-      BUILD_NAME: ${{ steps.set_product_name.outputs.VERSION }}
+      PRODUCT_NAME: ${{ steps.set_product_name.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
         with:
