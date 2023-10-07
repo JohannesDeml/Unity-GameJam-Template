@@ -1,4 +1,5 @@
 # Build the project by pushing tags
+# Creates a release draft with all builds attached
 name: Build project & release
 
 on:
@@ -52,12 +53,12 @@ jobs:
       fail-fast: false
       matrix:
         targetPlatform:
-          #- StandaloneWindows64
-          #- StandaloneOSX
-          #- StandaloneLinux64
-          #- WebGL
-          # Remove comments below to build for mobile platforms
-          #- iOS
+          # comment out platforms you don't need by adding a # in front of the lines below
+          - StandaloneWindows64
+          - StandaloneOSX
+          - StandaloneLinux64
+          - WebGL
+          - iOS
           - Android
     steps:
       - uses: actions/checkout@v3
@@ -91,7 +92,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.targetPlatform }}
+          name: ${{ matrix.targetPlatform }}-${{ needs.variables.outputs.TAG }}
           path: builds
 
   createRelease:
