@@ -16,7 +16,7 @@ jobs:
       TAG: ${{ steps.set_tag.outputs.VERSION }}
       PRODUCT_NAME: ${{ steps.set_product_name.outputs.VERSION }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true
@@ -61,12 +61,12 @@ jobs:
           - iOS
           - Android
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
@@ -78,9 +78,11 @@ jobs:
         uses: jlumbroso/free-disk-space@v1.3.0
 
       - name: Build project
-        uses: game-ci/unity-builder@v3
+        uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           buildMethod: UnityBuilderAction.BuildScript.BuildWithCommandlineArgs
           customParameters: -tag ${{ needs.variables.outputs.TAG }}
@@ -90,7 +92,7 @@ jobs:
           versioning: Tag
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.targetPlatform }}-${{ needs.variables.outputs.TAG }}
           path: builds
@@ -101,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: builds/
 
@@ -113,7 +115,7 @@ jobs:
         run: zip -r AllBuilds-${{ needs.variables.outputs.TAG }}.zip builds
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: AllBuilds-${{ needs.variables.outputs.TAG }}.zip
           body: |
